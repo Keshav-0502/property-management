@@ -98,7 +98,9 @@ const Card = ({ card, index, listId, onDeleteCard }) => {
           >
             <div className="card-status">
               {isLive && <span className="live-badge">LIVE</span>}
+              }
               {isSold && <span className="sold-badge">SOLD</span>}
+              }
               <span className="status-text">{status}</span>
             </div>
 
@@ -112,6 +114,7 @@ const Card = ({ card, index, listId, onDeleteCard }) => {
                 <div className="details">
                   <span>{getArea()}</span>
                   {getArea() && <span className="separator">|</span>}
+                  }
                   <span>{propertyData.bank_details?.bank_name}</span>
                   <span className="separator">|</span>
                   <span>{propertyData.property_details?.auction_type}</span>
