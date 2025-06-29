@@ -115,6 +115,7 @@ function App() {
     if (window.boardDragHandlers?.onDragEnd) {
       window.boardDragHandlers.onDragEnd();
     }
+    
     const { destination, source, draggableId } = result;
 
     if (!destination) {
@@ -227,7 +228,10 @@ function App() {
       <header className="app-header">
         <h1>🏠 Property Management System</h1>
       </header>
-      <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <DragDropContext 
+        onDragStart={handleDragStart} 
+        onDragEnd={handleDragEnd}
+      >
         <Board 
           board={board} 
           onAddCard={addCard} 
@@ -239,4 +243,4 @@ function App() {
   );
 }
 
-export default App; 
+export default App;

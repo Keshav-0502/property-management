@@ -8,12 +8,22 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 .card.dragging {
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  opacity: 0.9;
-  z-index: 1000;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  opacity: 0.95;
+  z-index: 9999 !important;
+  position: fixed !important;
+  pointer-events: none !important;
+  transform-origin: 0 0 !important;
+  transition: none !important;
+  /* Ensure dragged card stays on top of everything */
+  isolation: isolate;
 }
 
 .card.sold {
@@ -183,6 +193,7 @@
   justify-content: center;
   border-radius: 50%;
   transition: all 0.2s ease;
+  z-index: 10;
 }
 
 .delete-btn:hover {
@@ -190,10 +201,18 @@
   color: white;
 }
 
+/* Ensure proper stacking context for drag operations */
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .card {
     padding: 10px;
+    /* Improve touch interaction */
+    touch-action: none;
   }
   
   .property-title {
@@ -216,6 +235,9 @@
 @media (max-width: 480px) {
   .card {
     padding: 8px;
+    /* Ensure proper touch handling */
+    touch-action: none;
+    -webkit-touch-callout: none;
   }
   
   .property-title {
@@ -238,4 +260,17 @@
     padding: 3px 8px;
     font-size: 0.7rem;
   }
-} 
+}
+
+/* Prevent text selection during drag */
+.card * {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Ensure dragged cards appear above modals and other overlays */
+.card.dragging {
+  z-index: 10000 !important;
+}

@@ -3,6 +3,12 @@
   padding: 1rem;
   overflow-x: auto;
   overflow-y: hidden;
+  position: relative;
+}
+
+.board.dragging {
+  /* Prevent scroll during drag operations */
+  overflow: hidden;
 }
 
 .board-content {
@@ -32,6 +38,8 @@
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     position: relative;
+    /* Improve touch scrolling performance */
+    will-change: scroll-position;
   }
   
   .board {
@@ -93,12 +101,20 @@
     justify-content: flex-start;
     align-items: flex-start;
   }
+
+  /* Improve drag performance on mobile */
+  .board.dragging {
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: auto;
+  }
 }
 
 /* Mobile peek effect */
 @media (max-width: 480px) {
   .board {
     padding: 0;
+    /* Optimize for touch devices */
+    touch-action: pan-x;
   }
   
   .board:after {
@@ -114,4 +130,20 @@
     justify-content: flex-start;
     align-items: flex-start;
   }
-} 
+
+  /* Prevent conflicts during drag */
+  .board.dragging {
+    touch-action: none;
+  }
+}
+
+/* Ensure proper stacking context for drag operations */
+.board {
+  isolation: isolate;
+}
+
+/* Create a new stacking context to contain dragged elements */
+.board-content {
+  position: relative;
+  z-index: 1;
+}

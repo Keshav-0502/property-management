@@ -6,7 +6,6 @@ import './Card.css';
 const Card = ({ card, index, listId, onDeleteCard }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const cardRef = useRef(null);
-  const dragStartPositionRef = useRef({ x: 0, y: 0 });
 
   const formatPrice = (price) => {
     if (!price) return '';
@@ -36,32 +35,6 @@ const Card = ({ card, index, listId, onDeleteCard }) => {
     if (window.confirm('Are you sure you want to delete this card?')) {
       onDeleteCard(listId, card.id);
     }
-  };
-
-  const calculateDragOffset = (e) => {
-    const cardElement = cardRef.current;
-    if (!cardElement) return;
-
-    const rect = cardElement.getBoundingClientRect();
-    const clientX = e.clientX || (e.touches && e.touches[0]?.clientX);
-    const clientY = e.clientY || (e.touches && e.touches[0]?.clientY);
-    
-    if (clientX && clientY) {
-      dragStartPositionRef.current = {
-        x: clientX - rect.left,
-        y: clientY - rect.top
-      };
-    }
-  };
-
-  const handleMouseDown = (e) => {
-    if (e.target.closest('.delete-btn')) return;
-    calculateDragOffset(e);
-  };
-
-  const handleTouchStart = (e) => {
-    if (e.target.closest('.delete-btn')) return;
-    calculateDragOffset(e);
   };
 
   const handleClick = (e) => {
@@ -110,13 +83,16 @@ const Card = ({ card, index, listId, onDeleteCard }) => {
             }}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            onMouseDown={handleMouseDown}
-            onTouchStart={handleTouchStart}
             onClick={handleClick}
             style={{
               ...provided.draggableProps.style,
+              // Fix z-index and positioning for dragging
               ...(snapshot.isDragging && {
-                transform: `${provided.draggableProps.style?.transform || ''} translate(${-dragStartPositionRef.current.x}px, ${-dragStartPositionRef.current.y}px)`,
+                position: 'fixed',
+                zIndex: 9999,
+                pointerEvents: 'none',
+                transform: provided.draggableProps.style?.transform || 'translate(0px, 0px)',
+                transition: 'none'
               })
             }}
           >
@@ -203,4 +179,4 @@ const Card = ({ card, index, listId, onDeleteCard }) => {
   );
 };
 
-export default Card; 
+export default Card;

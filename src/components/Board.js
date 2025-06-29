@@ -8,6 +8,7 @@ const Board = ({ board, onAddCard, onAddList, onDeleteCard }) => {
   const [isDragging, setIsDragging] = useState(false);
   const autoScrollIntervalRef = useRef(null);
   const dragPositionRef = useRef({ x: 0, y: 0 });
+  const scrollCompensationRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const board = boardRef.current;
@@ -23,13 +24,23 @@ const Board = ({ board, onAddCard, onAddList, onDeleteCard }) => {
       } else {
         board.style.setProperty('--show-peek-indicator', '1');
       }
+
+      // Track scroll changes during drag for compensation
+      if (isDragging) {
+        const currentScrollX = board.scrollLeft;
+        const currentScrollY = board.scrollTop;
+        scrollCompensationRef.current = {
+          x: currentScrollX,
+          y: currentScrollY
+        };
+      }
     };
 
     board.addEventListener('scroll', handleScroll);
     handleScroll(); // Initial check
 
     return () => board.removeEventListener('scroll', handleScroll);
-  }, [board.lists.length]);
+  }, [board.lists.length, isDragging]);
 
   const scrollToNextColumn = useCallback((direction) => {
     const board = boardRef.current;
@@ -93,12 +104,14 @@ const Board = ({ board, onAddCard, onAddList, onDeleteCard }) => {
       if (isDragging && e.touches[0]) {
         dragPositionRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
         checkAutoScroll();
+        // Prevent default to avoid scroll conflicts
+        e.preventDefault();
       }
     };
 
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('touchmove', handleTouchMove);
+      document.addEventListener('mousemove', handleMouseMove, { passive: false });
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
     }
 
     return () => {
@@ -110,6 +123,18 @@ const Board = ({ board, onAddCard, onAddList, onDeleteCard }) => {
   // Expose drag handlers to be used by DragDropContext
   const handleDragStart = useCallback(() => {
     setIsDragging(true);
+    // Store initial scroll position
+    const board = boardRef.current;
+    if (board) {
+      scrollCompensationRef.current = {
+        x: board.scrollLeft,
+        y: board.scrollTop
+      };
+    }
+    
+    // Prevent body scroll during drag on mobile
+    document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
   }, []);
 
   const handleDragEnd = useCallback(() => {
@@ -124,6 +149,13 @@ const Board = ({ board, onAddCard, onAddList, onDeleteCard }) => {
     if (board) {
       board.classList.remove('auto-scroll-left', 'auto-scroll-right');
     }
+
+    // Restore body scroll
+    document.body.style.overflow = '';
+    document.body.style.touchAction = '';
+    
+    // Reset scroll compensation
+    scrollCompensationRef.current = { x: 0, y: 0 };
   }, []);
 
   // Cleanup on unmount
@@ -132,6 +164,9 @@ const Board = ({ board, onAddCard, onAddList, onDeleteCard }) => {
       if (autoScrollIntervalRef.current) {
         clearTimeout(autoScrollIntervalRef.current);
       }
+      // Ensure body styles are restored
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     };
   }, []);
 
@@ -149,7 +184,7 @@ const Board = ({ board, onAddCard, onAddList, onDeleteCard }) => {
   }, [handleDragStart, handleDragEnd]);
 
   return (
-    <div className="board" ref={boardRef}>
+    <div className={`board ${isDragging ? 'dragging' : ''}`} ref={boardRef}>
       <div className="board-content">
         {board.lists.map(list => (
           <List
@@ -165,4 +200,4 @@ const Board = ({ board, onAddCard, onAddList, onDeleteCard }) => {
   );
 };
 
-export default Board; 
+export default Board;

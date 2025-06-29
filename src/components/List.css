@@ -11,6 +11,8 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
+  /* Ensure proper stacking context */
+  z-index: 1;
 }
 
 .list-header {
@@ -47,11 +49,16 @@
   margin-bottom: 1rem;
   min-height: 100px;
   transition: background-color 0.2s ease;
+  position: relative;
+  /* Ensure drop zones are properly positioned */
+  z-index: 2;
 }
 
 .list-content.dragging-over {
   background-color: rgba(103, 126, 234, 0.1);
   border-radius: 8px;
+  /* Highlight drop zone */
+  box-shadow: inset 0 0 0 2px rgba(103, 126, 234, 0.3);
 }
 
 /* Mobile adjustments - full width with peek */
@@ -65,6 +72,8 @@
     flex-shrink: 0;
     margin: 0 auto;
     scroll-snap-align: center;
+    /* Improve touch interaction */
+    touch-action: pan-y;
   }
   
   .list:after {
@@ -92,6 +101,12 @@
     font-size: 0.7rem;
     padding: 0.2rem 0.4rem;
   }
+
+  .list-content {
+    /* Optimize scrolling on mobile */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
 }
 
 @media (max-width: 480px) {
@@ -101,6 +116,8 @@
     width: calc(100vw - 5rem);
     padding: 0.5rem;
     margin: 0 auto;
+    /* Ensure proper touch handling */
+    touch-action: pan-y;
   }
   
   .list:after {
@@ -108,4 +125,22 @@
     width: 2px;
     height: 25px;
   }
-} 
+}
+
+/* Ensure lists don't interfere with drag operations */
+.list * {
+  /* Prevent text selection during drag */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Allow text selection in input fields */
+.list input,
+.list textarea {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
