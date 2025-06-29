@@ -1,0 +1,111 @@
+.list {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 1rem;
+  min-width: 280px;
+  max-width: 320px;
+  max-height: calc(100vh - 140px);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.list-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  flex: 1;
+}
+
+.card-count {
+  background: #667eea;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  min-width: 20px;
+  text-align: center;
+}
+
+.list-content {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  min-height: 100px;
+  transition: background-color 0.2s ease;
+}
+
+.list-content.dragging-over {
+  background-color: rgba(103, 126, 234, 0.1);
+  border-radius: 8px;
+}
+
+/* Mobile adjustments - full width with peek */
+@media (max-width: 768px) {
+  .list {
+    min-width: calc(100vw - 6rem); /* Full width minus peek space */
+    max-width: calc(100vw - 6rem);
+    width: calc(100vw - 6rem);
+    padding: 0.75rem;
+    max-height: calc(100vh - 120px);
+    flex-shrink: 0;
+    margin: 0 auto;
+    scroll-snap-align: center;
+  }
+  
+  .list:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -2rem;
+    width: 3px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 2px;
+    transform: translateY(-50%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .list:last-child:after {
+    display: none;
+  }
+  
+  .list-title {
+    font-size: 1rem;
+  }
+  
+  .card-count {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .list {
+    min-width: calc(100vw - 5rem); /* Smaller peek for very small screens */
+    max-width: calc(100vw - 5rem);
+    width: calc(100vw - 5rem);
+    padding: 0.5rem;
+    margin: 0 auto;
+  }
+  
+  .list:after {
+    right: -1.5rem;
+    width: 2px;
+    height: 25px;
+  }
+} 

@@ -1,0 +1,117 @@
+.board {
+  flex: 1;
+  padding: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.board-content {
+  display: flex;
+  gap: 1rem;
+  min-height: calc(100vh - 120px);
+  padding-bottom: 1rem;
+}
+
+/* Desktop adjustments */
+@media (min-width: 769px) {
+  .board {
+    padding: 1rem;
+  }
+  
+  .board-content {
+    gap: 1rem;
+  }
+}
+
+/* Mobile adjustments - full width with peek */
+@media (max-width: 768px) {
+  .board {
+    padding: 0;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+  }
+  
+  .board {
+    --show-peek-indicator: 1;
+  }
+
+  .board.auto-scroll-left::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 100vh;
+    background: linear-gradient(to right, rgba(103, 126, 234, 0.2), transparent);
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .board.auto-scroll-right::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 100vh;
+    background: linear-gradient(to left, rgba(103, 126, 234, 0.2), transparent);
+    z-index: 1000;
+    pointer-events: none;
+  }
+
+  .board:after {
+    content: '';
+    position: fixed;
+    top: 50%;
+    right: 0;
+    width: 4px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.6), transparent);
+    border-radius: 4px 0 0 4px;
+    transform: translateY(-50%);
+    z-index: 10;
+    box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+    animation: pulse 2s infinite;
+    opacity: var(--show-peek-indicator);
+    transition: opacity 0.3s ease;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+  
+  .board-content {
+    gap: 1rem;
+    min-height: calc(100vh - 100px);
+    padding: 0.5rem;
+    padding-left: calc(50vw - (100vw - 6rem) / 2); /* Center first column */
+    padding-right: calc(50vw - (100vw - 6rem) / 2); /* Center last column */
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+}
+
+/* Mobile peek effect */
+@media (max-width: 480px) {
+  .board {
+    padding: 0;
+  }
+  
+  .board:after {
+    width: 3px;
+    height: 50px;
+  }
+  
+  .board-content {
+    gap: 0.75rem;
+    padding: 0.5rem;
+    padding-left: calc(50vw - (100vw - 5rem) / 2); /* Center first column */
+    padding-right: calc(50vw - (100vw - 5rem) / 2); /* Center last column */
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+} 
